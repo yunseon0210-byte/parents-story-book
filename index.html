@@ -447,7 +447,7 @@ function viewSend(){
     <h2>발송 설정</h2>
     <div class="grid2">
       <label>배포 주소 (이 프로그램을 올린 https 주소)<input data-bind="baseUrl" placeholder="${esc(baseUrl())}" value="${esc(P.baseUrl)}"></label>
-      <label>한 번에 보낼 질문 수 (사업계획서 권장: 5개씩)
+      <label>한 번에 보낼 질문 수 (권장: 5개씩)
         <select data-bind="roundSize">${[5,10,20].map(n=>`<option value="${n}" ${+P.roundSize===n?'selected':''}>${n}개씩 · ${Math.ceil(P.questions.length/n)}회차</option>`).join('')}</select></label>
     </div>
     <p class="hint">질문 내용은 링크의 <b>#</b> 뒤에만 담겨 서버로 전송되지 않아요. 부모님 답변은 부모님 휴대폰에 저장되고, 부모님이 "보내기"를 누를 때만 전달돼요.</p>
