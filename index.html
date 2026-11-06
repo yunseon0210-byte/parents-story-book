@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>우리 부모님 이야기책</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f1e7; --surface:#fffdf8; --ink:#2b2622; --muted:#6f665c; --line:#e3d9c8;
+  --accent:#b4532a; --accent-soft:#f3e2d6; --ok:#3f7a4f; --ok-soft:#e1efe3; --warn:#9a6210; --warn-soft:#f8ecd3;
+  --rec:#d23b2b; --radius:14px; color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:15px;line-height:1.6;word-break:keep-all}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;transition:background .15s,border-color .15s}
+button:hover{border-color:#cdbfa8;background:#fbf6ec}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{background:#9c4522}
+button.icon{padding:4px 8px;font-size:13px;line-height:1.2}
+button:disabled{opacity:.5;cursor:default}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff}
+textarea{resize:vertical;line-height:1.7}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+label{display:block;font-size:13px;color:var(--muted);margin:0 0 12px}
+label>input,label>textarea,label>select{margin-top:4px;font-size:15px;color:var(--ink)}
+h2{font-size:18px;margin:0 0 14px}
+.hint{font-size:13px;color:var(--muted);margin:0 0 12px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row.end{justify-content:flex-end}
+
+/* 상단 */
+.top{position:sticky;top:0;z-index:5;background:rgba(246,241,231,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1080px;margin:0 auto;padding:14px 16px 0}
+.brand{font-family:'Noto Serif KR',serif;font-weight:700;font-size:20px}
+.brand small{font-family:'Noto Sans KR',sans-serif;font-weight:400;font-size:12px;color:var(--muted);margin-left:8px}
+.tabs{display:flex;gap:4px;overflow-x:auto;margin-top:10px;scrollbar-width:none}
+.tabs button{border:0;border-bottom:3px solid transparent;border-radius:0;background:none;padding:10px 12px;white-space:nowrap;color:var(--muted)}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:700}
+main{max-width:1080px;margin:0 auto;padding:20px 16px 80px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:16px}
+@media (max-width:820px){.grid2{grid-template-columns:1fr}}
+.count{font-weight:700;color:var(--warn);background:var(--warn-soft);border-radius:99px;padding:2px 10px;font-size:13px}
+.count.ok{color:var(--ok);background:var(--ok-soft)}
+.chip{display:inline-block;font-size:11px;color:var(--accent);background:var(--accent-soft);border-radius:99px;padding:1px 8px;white-space:nowrap}
+.pill{font-size:12px;border-radius:99px;padding:2px 10px;white-space:nowrap;background:#eee8dc;color:var(--muted)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.qlist{list-style:none;margin:0 0 12px;padding:0;counter-reset:q}
+.qlist li{counter-increment:q;display:grid;grid-template-columns:28px auto 1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+.qlist li::before{content:counter(q);font-weight:700;color:var(--muted);text-align:right;font-size:13px}
+.qbtns{display:flex;gap:4px}
+@media (max-width:560px){.qlist li{grid-template-columns:24px 1fr}.qlist li .chip{display:none}.qbtns{grid-column:2}}
+details.bank{border-top:1px solid var(--line);padding:6px 0}
+details.bank summary{cursor:pointer;font-weight:700;padding:6px 0}
+.bank-item{display:flex;gap:10px;align-items:flex-start;color:var(--ink);font-size:14px;margin:0;padding:6px 4px;border-radius:8px}
+.bank-item:hover{background:#fbf6ec}
+.bank-item input{width:auto;margin-top:5px}
+.rec-tag{font-size:11px;color:var(--ok);border:1px solid #bcd8c2;border-radius:99px;padding:0 6px;margin-left:6px;white-space:nowrap}
+.custom-row{display:grid;grid-template-columns:150px 1fr auto;gap:8px;margin-top:12px}
+@media (max-width:560px){.custom-row{grid-template-columns:1fr}}
+
+.notice{border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:16px}
+.notice.warn{background:var(--warn-soft);color:#6b4609}
+.notice.info{background:#eaf0f6;color:#2f4a63}
+.round{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;background:#fff}
+.round h3{margin:0 0 6px;font-size:16px}
+.round ol{margin:6px 0 12px;padding-left:22px;color:var(--muted);font-size:14px}
+.link-box{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)}
+
+.progress{height:10px;background:#ece4d6;border-radius:99px;overflow:hidden;margin:6px 0 4px}
+.progress i{display:block;height:100%;background:var(--ok);border-radius:99px}
+.stats{display:flex;flex-wrap:wrap;gap:20px;font-size:14px;color:var(--muted)}
+.stats b{display:block;font-size:22px;color:var(--ink)}
+.ans-item{border-top:1px solid var(--line);padding:16px 0}
+.ans-head{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.ans-head .num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px;display:grid;place-items:center}
+.ans-head .qt{flex:1;font-weight:500}
+.ans-item audio{height:36px;max-width:100%;vertical-align:middle}
+.ans-item textarea{margin-top:8px}
+label.btnlike{display:inline-block;margin:0;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;color:var(--ink);font-size:15px}
+label.btnlike:hover{background:#fbf6ec}
+.orig{font-size:13px;color:var(--muted);background:#f8f4ec;border-radius:10px;padding:10px 12px;margin:6px 0;white-space:pre-wrap}
+.edit-item{border-top:1px solid var(--line);padding:16px 0}
+.edit-item.excluded{opacity:.55}
+.edit-item .row{margin-top:8px}
+.inline-check{display:inline-flex;gap:6px;align-items:center;margin:0;color:var(--muted);font-size:13px}
+.inline-check input{width:auto}
+.status-line{font-size:13px;color:var(--muted);min-height:1.4em}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.book-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 30px rgba(80,60,30,.08)}
+.empty{color:var(--muted);text-align:center;padding:40px 16px}
+
+/* 모달(자녀 보조 녹음) */
+.modal{position:fixed;inset:0;background:rgba(30,25,20,.45);display:grid;place-items:center;z-index:20;padding:16px}
+.modal-box{background:var(--surface);border-radius:18px;padding:24px;max-width:520px;width:100%;text-align:center}
+.modal-box .q{font-family:'Noto Serif KR',serif;font-size:20px;margin:8px 0 16px}
+.live{min-height:60px;font-size:14px;color:var(--muted);background:#f8f4ec;border-radius:10px;padding:10px;text-align:left;margin:12px 0}
+.timer{font-size:28px;font-variant-numeric:tabular-nums;font-weight:700;color:var(--rec)}
+
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#2b2622;color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:30;max-width:calc(100% - 32px);text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ───── 부모님 화면 ───── */
+body.parent-mode{background:#fbf7ef;font-size:20px}
+#parent{max-width:560px;margin:0 auto;padding:20px 18px 40px;min-height:100vh;display:flex;flex-direction:column}
+.p-brand{font-family:'Noto Serif KR',serif;font-size:16px;color:var(--muted);text-align:center;margin-bottom:18px}
+.p-h1{font-family:'Noto Serif KR',serif;font-size:28px;line-height:1.45;margin:8px 0 16px}
+.p-text{font-size:20px;line-height:1.7;margin:0 0 16px}
+.p-consent{background:#fff;border:2px solid var(--line);border-radius:16px;padding:16px 18px;margin:8px 0 20px}
+.p-consent ul{margin:0;padding-left:20px}
+.p-consent li{font-size:18px;line-height:1.6;margin-bottom:10px}
+.p-btn{display:block;width:100%;min-height:64px;font-size:22px;font-weight:700;border-radius:16px;padding:14px 18px;margin:0 0 12px}
+.p-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.p-btn.ghost{background:#fff;border:2px solid var(--line);font-weight:500}
+.p-top{display:flex;align-items:center;gap:12px;font-size:18px;color:var(--muted);margin-bottom:16px}
+.p-bar{flex:1;height:12px;background:#ece4d6;border-radius:99px;overflow:hidden}
+.p-bar i{display:block;height:100%;background:var(--accent)}
+.p-label{font-size:18px;color:var(--accent);font-weight:700;margin:0}
+.p-q{font-family:'Noto Serif KR',serif;font-size:30px;line-height:1.5;margin:8px 0 18px}
+.p-rec{text-align:center;margin:12px 0 20px}
+.p-mic{width:180px;height:180px;border-radius:50%;border:0;background:var(--rec);color:#fff;font-size:22px;font-weight:700;box-shadow:0 10px 30px rgba(210,59,43,.35);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.p-mic:hover{background:#b83122}
+.p-mic .dot{width:26px;height:26px;border-radius:50%;background:#fff}
+.p-mic.on{background:#3b332c;box-shadow:0 0 0 0 rgba(210,59,43,.6);animation:pulse 1.6s infinite}
+.p-mic.on .dot{border-radius:5px;background:var(--rec)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(210,59,43,.55)}70%{box-shadow:0 0 0 26px rgba(210,59,43,0)}100%{box-shadow:0 0 0 0 rgba(210,59,43,0)}}
+.p-timer{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;margin:14px 0 4px}
+.p-live{font-size:17px;color:var(--muted);text-align:left;background:#fff;border-radius:12px;padding:12px;min-height:56px;margin:8px 0 0}
+.p-hint{font-size:17px;color:var(--muted);margin:14px 0 0}
+.p-done{font-size:22px;color:var(--ok);font-weight:700;margin-bottom:10px}
+.p-rec audio{width:100%;margin:8px 0 14px}
+.p-nav{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:auto;padding-top:16px}
+.p-nav .p-btn{margin:0}
+.p-skip{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:17px;display:block;margin:4px auto 0}
+.p-warn{background:var(--warn-soft);color:#6b4609;border-radius:14px;padding:14px 16px;font-size:18px;line-height:1.6;margin:12px 0}
+
+/* 인쇄: 자서전만 */
+@media print{
+  body{background:#fff}
+  .top,.toolbar,.no-print,#toast{display:none!important}
+  main{padding:0;max-width:none}
+  #view>*:not(.book-wrap){display:none!important}
+  .book-wrap{border:0;box-shadow:none;border-radius:0}
+}
+</style>
+<style id="book-css"></style>
+</head>
+<body>
+<div id="app" hidden>
+  <header class="top"><div class="top-in">
+    <div class="brand">우리 부모님 이야기책<small>고백 · 고요한 백마디 · 시제품 v0.1</small></div>
+    <nav class="tabs" id="tabs"></nav>
+  </div></header>
+  <main id="view"></main>
+</div>
+<div id="parent" hidden></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+
+/* ════════════════ 질문 은행 ════════════════ */
+const CHAPTERS = [
+  {id:'childhood', title:'어린 시절'},
+  {id:'school',    title:'학창 시절'},
+  {id:'youth',     title:'청춘과 꿈'},
+  {id:'love',      title:'사랑과 결혼'},
+  {id:'work',      title:'일과 삶'},
+  {id:'parent',    title:'부모가 되어'},
+  {id:'wisdom',    title:'인생의 지혜'},
+  {id:'message',   title:'남기고 싶은 말'},
+  {id:'custom',    title:'더 듣고 싶은 이야기'},
+];
+const BANK = [
+  ['c1','childhood',1,'태어나신 곳은 어디였고, 어린 시절 살던 집은 어떤 모습이었나요?'],
+  ['c2','childhood',1,'어릴 때 가장 좋아했던 놀이나 장난은 무엇이었나요?'],
+  ['c3','childhood',1,'어린 시절 부모님은 어떤 분이셨나요? 기억나는 모습을 들려주세요.'],
+  ['c4','childhood',0,'어릴 때 가장 맛있게 먹었던 음식은 무엇이었나요?'],
+  ['c5','childhood',0,'형제자매와 있었던 일 중 지금도 생각나는 일이 있나요?'],
+  ['c6','childhood',0,'어린 시절 명절은 어떻게 보내셨나요?'],
+  ['c7','childhood',0,'어린 시절 살던 동네 풍경은 어땠나요?'],
+  ['s1','school',1,'학교 다닐 때 어떤 학생이었나요?'],
+  ['s2','school',1,'가장 기억에 남는 선생님이나 친구는 누구인가요?'],
+  ['s3','school',0,'학창 시절 가장 신났던 날이나 사건이 있었나요?'],
+  ['s4','school',0,'학교 다닐 때 좋아했던 과목이나 잘했던 것은 무엇이었나요?'],
+  ['s5','school',0,'소풍이나 수학여행에서 있었던 일을 들려주세요.'],
+  ['s6','school',0,'학창 시절에는 커서 무엇이 되고 싶으셨나요?'],
+  ['y1','youth',1,'스무 살 무렵, 어떤 꿈을 꾸셨나요?'],
+  ['y2','youth',1,'젊은 시절 가장 용기를 냈던 순간은 언제였나요?'],
+  ['y3','youth',0,'그 시절 즐겨 듣던 노래나 좋아했던 연예인이 있었나요?'],
+  ['y4','youth',0,'젊었을 때 가장 친했던 친구와의 추억을 들려주세요.'],
+  ['y5','youth',0,'처음으로 내 손으로 돈을 벌었을 때 무엇을 하셨나요?'],
+  ['l1','love',1,'지금의 배우자를 처음 만난 날은 어땠나요? 첫인상은요?'],
+  ['l2','love',1,'결혼을 결심하게 된 계기는 무엇이었나요?'],
+  ['l3','love',0,'결혼식 날은 어땠나요?'],
+  ['l4','love',0,'신혼 시절 가장 기억에 남는 일은 무엇인가요?'],
+  ['l5','love',1,'함께 살면서 가장 고마웠던 순간은 언제였나요?'],
+  ['w1','work',1,'처음 해 본 일은 무엇이었고, 어떻게 시작하게 되셨나요?'],
+  ['w2','work',1,'살면서 가장 힘들었던 때는 언제였고, 그 시기를 어떻게 견디셨나요?'],
+  ['w3','work',0,'일하면서 가장 보람 있었던 순간은 언제였나요?'],
+  ['w4','work',1,'살면서 가장 큰 결정을 내렸던 순간은 언제였나요?'],
+  ['w5','work',0,'돈을 모으거나 집을 마련할 때 있었던 이야기를 들려주세요.'],
+  ['w6','work',0,'세상이 참 많이 변했다고 느낀 순간은 언제인가요?'],
+  ['p1','parent',1,'저를 처음 품에 안았을 때 어떤 기분이셨나요?'],
+  ['p2','parent',1,'제가 어렸을 때 어떤 아이였나요?'],
+  ['p3','parent',0,'저를 키우면서 가장 힘들었던 때는 언제였나요?'],
+  ['p4','parent',1,'저를 키우면서 가장 행복했던 순간은 언제였나요?'],
+  ['p5','parent',0,'제 이름은 어떻게 짓게 되셨나요?'],
+  ['p6','parent',0,'저에게 미처 하지 못했던 이야기가 있나요?'],
+  ['x1','wisdom',1,'다시 젊은 시절로 돌아간다면 해 보고 싶은 일은 무엇인가요?'],
+  ['x2','wisdom',0,'살면서 가장 아쉬웠던 일이 있다면 무엇인가요?'],
+  ['x3','wisdom',1,'인생에서 가장 행복했던 시절은 언제였나요?'],
+  ['x4','wisdom',0,'살면서 지켜 온 나만의 원칙이나 좌우명이 있나요?'],
+  ['x5','wisdom',0,'요즘 가장 즐거운 일은 무엇인가요?'],
+  ['x6','wisdom',0,'앞으로 꼭 해 보고 싶은 일이 있나요?'],
+  ['x7','wisdom',0,'힘들 때 마음을 다잡게 해 준 것은 무엇이었나요?'],
+  ['m1','message',1,'자녀와 손주들에게 꼭 해 주고 싶은 말은 무엇인가요?'],
+  ['m2','message',1,'사람들에게 어떤 사람으로 기억되고 싶으세요?'],
+  ['m3','message',0,'이 이야기책을 읽을 가족에게 한마디 남겨 주세요.'],
+  ['m4','message',0,'마지막으로, 지금의 나 자신에게 해 주고 싶은 말이 있나요?'],
+].map(([id,ch,rec,t])=>({id,ch,rec:!!rec,t}));
+const chTitle = id => (CHAPTERS.find(c=>c.id===id)||CHAPTERS[CHAPTERS.length-1]).title;
+const recommended = () => BANK.filter(q=>q.rec).map(({id,ch,t})=>({id,ch,t}));
+
+/* ════════════════ 유틸 ════════════════ */
+const $ = (s,el=document)=>el.querySelector(s);
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+const fmtDur = s => { s=Math.round(s||0); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; };
+const fmtDate = d => { const x=new Date(d); return `${x.getFullYear()}. ${x.getMonth()+1}. ${x.getDate()}.`; };
+const paras = t => String(t||'').split(/\n\s*\n|\n/).map(s=>s.trim()).filter(Boolean).map(s=>`<p>${esc(s)}</p>`).join('');
+function josa(word, withB, withoutB){
+  const w=String(word||'').trim(); if(!w) return withoutB;
+  const c=w.charCodeAt(w.length-1);
+  if(c<0xAC00||c>0xD7A3) return w+withoutB;
+  return w+(((c-0xAC00)%28)?withB:withoutB);
+}
+function b64e(str){ const b=new TextEncoder().encode(str); let s=''; for(const x of b) s+=String.fromCharCode(x); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const bin=atob(s); const b=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) b[i]=bin.charCodeAt(i); return new TextDecoder().decode(b); }
+const blobToDataURL = blob => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=()=>rej(r.error); r.readAsDataURL(blob); });
+const dataURLToBlob = async url => (await fetch(url)).blob();
+function audioDuration(blob){
+  return new Promise(res=>{ const a=new Audio(); const u=URL.createObjectURL(blob); a.preload='metadata';
+    a.onloadedmetadata=()=>{ const d=a.duration; URL.revokeObjectURL(u); res(isFinite(d)?d:0); };
+    a.onerror=()=>{ URL.revokeObjectURL(u); res(0); }; a.src=u; });
+}
+function download(blob, name){ const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); }
+let toastT; function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600); }
+async function copyText(s){ try{ await navigator.clipboard.writeText(s); return true; }catch{ const ta=document.createElement('textarea'); ta.value=s; document.body.appendChild(ta); ta.select(); let ok=false; try{ ok=document.execCommand('copy'); }catch{} ta.remove(); return ok; } }
+
+/* ════════════════ 저장소(IndexedDB) ════════════════ */
+const DB = {
+  _db:null,
+  open(){ return this._db ||= new Promise((res,rej)=>{ const r=indexedDB.open('bumo-story',1); r.onupgradeneeded=()=>r.result.createObjectStore('kv'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); },
+  async tx(mode, fn){ const db=await this.open(); return new Promise((res,rej)=>{ const q=fn(db.transaction('kv',mode).objectStore('kv')); q.onsuccess=()=>res(q.result); q.onerror=()=>rej(q.error); }); },
+  get(k){ return this.tx('readonly', s=>s.get(k)); },
+  set(k,v){ return this.tx('readwrite', s=>s.put(v,k)); },
+  del(k){ return this.tx('readwrite', s=>s.delete(k)); },
+};
+
+/* ════════════════ 음성 합성(질문 읽기) ════════════════ */
+function speak(texts, onDone){
+  if(!('speechSynthesis' in window)){ toast('이 브라우저는 음성 읽기를 지원하지 않아요'); return; }
+  speechSynthesis.cancel();
+  const list=[].concat(texts).filter(Boolean);
+  const voices=speechSynthesis.getVoices();
+  const ko=voices.find(v=>/ko[-_]KR/i.test(v.lang)&&/Google|Neural|Natural|Online/i.test(v.name))||voices.find(v=>/ko/i.test(v.lang));
+  list.forEach((t,i)=>{ const u=new SpeechSynthesisUtterance(t); u.lang='ko-KR'; u.rate=0.9; u.pitch=1; if(ko) u.voice=ko;
+    if(i===list.length-1&&onDone) u.onend=onDone; speechSynthesis.speak(u); });
+}
+if('speechSynthesis' in window){ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices(); }
+const ORD=['첫','두','세','네','다섯','여섯','일곱','여덟','아홉','열','열한','열두','열세','열네','열다섯','열여섯','열일곱','열여덟','열아홉','스무'];
+const ordinal = i => (ORD[i]||`${i+1}`)+' 번째 질문입니다.';
+
+/* ════════════════ 녹음 + 실시간 글 변환 ════════════════ */
+class Recorder{
+  constructor(o={}){ this.o=o; }
+  static supported(){ return !!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder); }
+  static sttSupported(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
+  async start(){
+    this.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    const types=['audio/webm;codecs=opus','audio/mp4','audio/ogg;codecs=opus','audio/webm'];
+    this.mime=types.find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+    this.mr=new MediaRecorder(this.stream, this.mime?{mimeType:this.mime,audioBitsPerSecond:32000}:{});
+    this.chunks=[]; this.mr.ondataavailable=e=>{ if(e.data&&e.data.size) this.chunks.push(e.data); };
+    this.mr.start(1000);
+    this.t0=Date.now(); this.final=''; this.interim=''; this.active=true; this.sttOff=false;
+    this.timer=setInterval(()=>{ const s=(Date.now()-this.t0)/1000; this.o.onTick&&this.o.onTick(s); if(s>=600&&this.o.onLimit) this.o.onLimit(); },500);
+    this._stt();
+  }
+  _stt(){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){ this.sttOff=true; return; }
+    const r=this.sr=new SR(); r.lang='ko-KR'; r.continuous=true; r.interimResults=true;
+    r.onresult=e=>{ let interim=''; for(let i=e.resultIndex;i<e.results.length;i++){ const x=e.results[i]; if(x.isFinal) this.final+=(this.final?' ':'')+x[0].transcript.trim(); else interim+=x[0].transcript; } this.interim=interim.trim(); this.o.onText&&this.o.onText(this.text()); };
+    r.onerror=e=>{ if(['not-allowed','service-not-allowed','audio-capture','language-not-supported','network'].includes(e.error)){ this.sttOff=true; this.o.onSttOff&&this.o.onSttOff(e.error); } };
+    r.onend=()=>{ if(this.interim){ this.final+=(this.final?' ':'')+this.interim; this.interim=''; }
+      if(this.active&&!this.sttOff){ try{ r.start(); }catch{ this.sttOff=true; } } else if(this._sttDone) this._sttDone(); };
+    try{ r.start(); }catch{ this.sttOff=true; }
+  }
+  text(){ return (this.final+(this.interim?' '+this.interim:'')).trim(); }
+  async stop(){
+    if(!this.active) return null;
+    this.active=false; clearInterval(this.timer);
+    const duration=(Date.now()-this.t0)/1000;
+    const blobP=new Promise(res=>{ this.mr.onstop=()=>res(new Blob(this.chunks,{type:(this.mr.mimeType||this.mime||'audio/webm').split(';')[0]})); });
+    try{ this.mr.stop(); }catch{}
+    const sttP=new Promise(res=>{ if(!this.sr||this.sttOff) return res(); this._sttDone=res; try{ this.sr.stop(); }catch{ res(); } setTimeout(res,1500); });
+    const [blob]=await Promise.all([blobP,sttP]);
+    this.stream.getTracks().forEach(t=>t.stop());
+    if(this.interim){ this.final+=(this.final?' ':'')+this.interim; this.interim=''; }
+    return {blob, mime:blob.type, duration, transcript:this.final.trim(), sttOff:this.sttOff};
+  }
+  cancel(){ this.active=false; clearInterval(this.timer); try{ this.sr&&this.sr.abort(); }catch{} try{ this.mr.stop(); }catch{} this.stream&&this.stream.getTracks().forEach(t=>t.stop()); }
+}
+function micErrorText(e){
+  const n=e&&e.name;
+  if(n==='NotAllowedError'||n==='SecurityError') return '마이크 사용이 허용되지 않았어요. 주소창 옆 자물쇠를 눌러 마이크를 "허용"으로 바꿔 주세요.';
+  if(n==='NotFoundError') return '마이크를 찾지 못했어요.';
+  return '녹음을 시작하지 못했어요. ('+(e&&e.message||e)+')';
+}
+
+/* ════════════════ 디지털 자서전 스타일(미리보기·내보내기 공용) ════════════════ */
+const BOOK_CSS = `
+.book{font-family:'Noto Serif KR','Nanum Myeongjo','Batang',serif;color:#222;background:#fffdf8;max-width:760px;margin:0 auto;line-height:1.95;font-size:17px;word-break:keep-all}
+.book .cover{min-height:540px;display:flex;align-items:center;justify-content:center;text-align:center;border-bottom:1px solid #e5dccb;padding:64px 24px;background:linear-gradient(#fffdf8,#f7efe2)}
+.book .kicker{letter-spacing:.35em;font-size:13px;color:#8a7f70;margin:0}
+.book .cover h1{font-size:40px;margin:18px 0 14px;line-height:1.35;font-weight:700}
+.book .who{font-size:18px;color:#5a5148;margin:0 0 40px}
+.book .date,.book .by{font-size:14px;color:#8a7f70;margin:4px 0}
+.book section.chapter,.book section.page{padding:56px 48px 24px}
+.book .ch-num{font-size:13px;letter-spacing:.25em;color:#a0522d;margin:0}
+.book h2{font-size:28px;margin:6px 0 32px;font-weight:700}
+.book .story{margin:0 0 44px}
+.book .story h3{font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:500;color:#7a6f62;margin:0 0 14px;padding-left:12px;border-left:3px solid #c9a27e;line-height:1.6}
+.book .story p,.book section.page p{margin:0 0 1em;text-indent:1em}
+.book .voice{display:flex;align-items:center;gap:8px;font-family:'Noto Sans KR',sans-serif;font-size:12px;color:#8a7f70;margin:0 0 12px}
+.book .voice audio{height:34px;max-width:300px;width:100%}
+.book .colophon{text-align:center;font-family:'Noto Sans KR',sans-serif;font-size:12px;color:#9a8f80;padding:32px 16px 40px;border-top:1px solid #eee5d6;margin-top:24px}
+@media (max-width:600px){.book section.chapter,.book section.page{padding:36px 20px 12px}.book .cover h1{font-size:30px}.book{font-size:16px}}
+@media print{
+  @page{size:A5;margin:16mm 14mm 18mm}
+  .book{max-width:none;font-size:10.5pt;line-height:1.85;background:#fff;color:#000;filter:grayscale(1)}
+  .book .voice{display:none}
+  .book .cover{min-height:0;height:165mm;border:0;background:none;page-break-after:always}
+  .book .cover h1{font-size:24pt}
+  .book section.chapter,.book section.page{page-break-before:always;padding:0}
+  .book h2{font-size:17pt;margin-bottom:18pt}
+  .book .story h3{font-size:9pt;break-after:avoid}
+  .book .colophon{border:0;page-break-before:always;padding-top:60mm}
+}`;
+$('#book-css').textContent = BOOK_CSS;
+
+/* ════════════════════════════════════════════════
+   자녀(운영자) 화면
+   ════════════════════════════════════════════════ */
+let P = null;            // 현재 프로젝트
+let tab = 'pick';
+let objectURLs = [];
+const apiKeyMem = {v:''};
+
+function newProject(){
+  return { id:uid(), title:'우리 엄마 이야기', parentLabel:'어머니', childName:'', greeting:'요즘 어머니 이야기가 참 궁금해졌어요. 생각나시는 대로 편하게 말씀해 주세요.',
+    retention:'자서전이 완성되고 90일이 지나면 녹음 파일은 지웁니다.', baseUrl:'', roundSize:5,
+    questions:recommended(), answers:{}, drafts:{}, consents:{}, sent:{}, preface:'', epilogue:'', createdAt:Date.now() };
+}
+let saveT;
+function save(){ clearTimeout(saveT); saveT=setTimeout(()=>DB.set('project',P).catch(e=>toast('저장하지 못했어요: '+e.message)),250); }
+function urlFor(blob){ const u=URL.createObjectURL(blob); objectURLs.push(u); return u; }
+
+const TABS=[['pick','① 질문 고르기'],['send','② 부모님께 보내기'],['collect','③ 답변 모으기'],['edit','④ 원고 정리'],['book','⑤ 디지털 자서전']];
+function renderTabs(){ $('#tabs').innerHTML=TABS.map(([k,t])=>`<button data-act="tab" data-k="${k}" class="${k===tab?'on':''}">${t}</button>`).join(''); }
+function render(){
+  objectURLs.forEach(u=>URL.revokeObjectURL(u)); objectURLs=[];
+  renderTabs();
+  $('#view').innerHTML = ({pick:viewPick,send:viewSend,collect:viewCollect,edit:viewEdit,book:viewBook})[tab]();
+}
+
+/* ── ① 질문 고르기 ── */
+function viewPick(){
+  const sel=P.questions, ids=new Set(sel.map(q=>q.id));
+  return `
+  <section class="grid2">
+    <div class="card">
+      <h2>기본 정보</h2>
+      <label>자서전 제목<input data-bind="title" value="${esc(P.title)}"></label>
+      <label>부모님 호칭<input data-bind="parentLabel" list="labels" value="${esc(P.parentLabel)}">
+        <datalist id="labels"><option>어머니<option>아버지<option>엄마<option>아빠<option>할머니<option>할아버지</datalist></label>
+      <label>자녀 이름 (부모님이 부르시는 이름)<input data-bind="childName" placeholder="예: 윤선" value="${esc(P.childName)}"></label>
+      <label>첫 인사말 · 첫 질문 전에 음성으로 읽어 드려요<textarea data-bind="greeting" rows="3">${esc(P.greeting)}</textarea></label>
+      <label>녹음 보관 안내 · 부모님 동의 화면에 보여요<textarea data-bind="retention" rows="2">${esc(P.retention)}</textarea></label>
+      <div class="row"><button data-act="speakGreeting">🔊 인사말 들어보기</button></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>보낼 질문</h2><span class="count ${sel.length===20?'ok':''}">${sel.length} / 20</span></div>
+      <p class="hint">상품 사양은 질문 20개, 답변 약 60분이에요. 🔊를 누르면 부모님이 듣게 될 AI 음성으로 읽어 줘요.</p>
+      <ol class="qlist">${sel.map((q,i)=>`
+        <li><span class="chip">${chTitle(q.ch)}</span><span>${esc(q.t)}</span>
+          <span class="qbtns"><button class="icon" data-act="speakQ" data-i="${i}" title="음성으로 듣기">🔊</button><button class="icon" data-act="moveQ" data-i="${i}" data-d="-1" title="위로">↑</button><button class="icon" data-act="moveQ" data-i="${i}" data-d="1" title="아래로">↓</button><button class="icon" data-act="removeQ" data-id="${q.id}" title="빼기">✕</button></span></li>`).join('')||'<p class="hint">아래 질문 은행에서 질문을 골라 주세요.</p>'}
+      </ol>
+      <div class="row"><button data-act="resetRec">추천 20개로 되돌리기</button><button data-act="sortCh">생애 순서로 정렬</button></div>
+    </div>
+  </section>
+  <section class="card">
+    <h2>질문 은행</h2>
+    <p class="hint">체크하면 보낼 질문에 들어가요. <span class="rec-tag">추천</span> 표시는 기본 20개 세트예요.</p>
+    ${CHAPTERS.filter(c=>c.id!=='custom').map(c=>`
+      <details class="bank" ${c.id==='childhood'?'open':''}><summary>${c.title} <span class="hint">(${BANK.filter(q=>q.ch===c.id&&ids.has(q.id)).length}/${BANK.filter(q=>q.ch===c.id).length})</span></summary>
+        ${BANK.filter(q=>q.ch===c.id).map(q=>`<label class="bank-item"><input type="checkbox" data-act="toggleQ" data-id="${q.id}" ${ids.has(q.id)?'checked':''}><span>${esc(q.t)}${q.rec?'<span class="rec-tag">추천</span>':''}</span></label>`).join('')}
+      </details>`).join('')}
+    <div class="custom-row">
+      <select id="customCh">${CHAPTERS.map(c=>`<option value="${c.id}" ${c.id==='custom'?'selected':''}>${c.title}</option>`).join('')}</select>
+      <input id="customText" placeholder="직접 질문 쓰기 (예: 아버지가 군대에서 겪은 일을 들려주세요)">
+      <button class="primary" data-act="addCustom">질문 추가</button>
+    </div>
+  </section>`;
+}
+
+/* ── ② 보내기 ── */
+function rounds(){ const n=Math.max(1,+P.roundSize||5), out=[]; for(let i=0;i<P.questions.length;i+=n) out.push(P.questions.slice(i,i+n)); return out; }
+const DEPLOY_URL='https://yunseon0210-byte.github.io/parents-story-book/';
+function baseUrl(){ return (P.baseUrl||(/^https?:/.test(location.protocol)&&!/^(localhost|127\.)/.test(location.hostname)?location.href:DEPLOY_URL)).replace(/#.*$/,''); }
+function parentLink(r){
+  const all=rounds(), qs=all[r-1];
+  const payload={v:1,pid:P.id,r,n:all.length,t:P.title,pl:P.parentLabel,cn:P.childName||'자녀',g:P.greeting,rn:P.retention,q:qs.map(q=>[q.id,q.t])};
+  return baseUrl()+'#p='+b64e(JSON.stringify(payload));
+}
+function kakaoMessage(r){
+  const qs=rounds()[r-1]; const cn=P.childName||'자녀';
+  return `[우리 부모님 이야기책 · ${r}회차 질문지]\n${P.parentLabel}, ${josa(cn,'이에요','예요')}. ${P.greeting}\n\n아래 링크를 누르면 질문이 목소리로 나와요. 빨간 버튼을 누르고 편하게 말씀해 주세요. (질문 ${qs.length}개, 15분쯤 걸려요)\n${parentLink(r)}`;
+}
+function viewSend(){
+  const isHttp=/^https?:/.test(location.protocol);
+  const R=rounds();
+  return `
+  ${!isHttp?`<div class="notice info">지금은 내 컴퓨터 파일로 열려 있어요. 부모님 링크는 배포 주소 <b>${esc(baseUrl())}</b> 로 만들어져요. 단, 이 컴퓨터에서 만든 질문·답변은 배포 주소의 화면과 따로 저장되니, 자녀용 작업도 배포 주소에서 하는 것을 권해요.</div>`:''}
+  <section class="card">
+    <h2>발송 설정</h2>
+    <div class="grid2">
+      <label>배포 주소 (이 프로그램을 올린 https 주소)<input data-bind="baseUrl" placeholder="${esc(baseUrl())}" value="${esc(P.baseUrl)}"></label>
+      <label>한 번에 보낼 질문 수 (사업계획서 권장: 5개씩)
+        <select data-bind="roundSize">${[5,10,20].map(n=>`<option value="${n}" ${+P.roundSize===n?'selected':''}>${n}개씩 · ${Math.ceil(P.questions.length/n)}회차</option>`).join('')}</select></label>
+    </div>
+    <p class="hint">질문 내용은 링크의 <b>#</b> 뒤에만 담겨 서버로 전송되지 않아요. 부모님 답변은 부모님 휴대폰에 저장되고, 부모님이 "보내기"를 누를 때만 전달돼요.</p>
+  </section>
+  ${R.map((qs,i)=>{ const r=i+1, sent=P.sent[r]; const answered=qs.filter(q=>P.answers[q.id]).length;
+    const due=sent?new Date(sent+7*864e5):null;
+    return `<div class="round">
+      <div class="card-head"><h3>${r}회차 · 질문 ${qs.length}개</h3>
+        <span class="pill ${answered===qs.length?'ok':sent?'warn':''}">${answered===qs.length?'답변 완료':sent?`보냄 ${fmtDate(sent)} · 기한 ${due.getMonth()+1}/${due.getDate()}`:'보내기 전'} · 답변 ${answered}/${qs.length}</span></div>
+      <ol start="${i*(+P.roundSize||5)+1}">${qs.map(q=>`<li>${esc(q.t)}</li>`).join('')}</ol>
+      <div class="row">
+        <button class="primary" data-act="copyMsg" data-r="${r}">💬 카톡 메시지 복사</button>
+        <button data-act="shareMsg" data-r="${r}">공유하기</button>
+        <button data-act="previewParent" data-r="${r}">👀 부모님 화면 미리보기</button>
+        <button data-act="speakRound" data-r="${r}">🔊 음성 미리듣기</button>
+        <button data-act="markSent" data-r="${r}">${sent?'보낸 날 지우기':'✓ 보냈어요'}</button>
+      </div>
+    </div>`;}).join('')}
+  `;
+}
+
+/* ── ③ 답변 모으기 ── */
+function answerStats(){
+  const qs=P.questions; const done=qs.filter(q=>P.answers[q.id]&&(P.answers[q.id].blob||P.answers[q.id].transcript)).length;
+  const secs=qs.reduce((s,q)=>s+((P.answers[q.id]&&P.answers[q.id].duration)||0),0);
+  return {done,total:qs.length,secs};
+}
+function viewCollect(){
+  const st=answerStats();
+  return `
+  <section class="card">
+    <h2>답변 가져오기</h2>
+    <p class="hint">부모님이 카톡으로 보내 주신 <b>답변 파일(.json)</b>을 여기에 넣어 주세요. 부모님이 카톡 <b>음성 메시지</b>로 답하셨다면, 음성을 저장해 질문별로 첨부하고 글을 붙여 넣어 주세요(수동 중계).</p>
+    <div class="row"><label class="btnlike">📥 답변 파일 가져오기<input type="file" id="importAnswers" accept=".json,application/json,text/plain" multiple hidden></label></div>
+  </section>
+  <section class="card">
+    <div class="stats">
+      <div><b>${st.done} / ${st.total}</b>답변한 질문</div>
+      <div><b>${fmtDur(st.secs)}</b>총 녹음 시간 (목표 약 60분)</div>
+      <div><b>${st.total?Math.round(st.done/st.total*100):0}%</b>응답 완료율 (기준: 20개 중 15개)</div>
+    </div>
+    <div class="progress"><i style="width:${st.total?st.done/st.total*100:0}%"></i></div>
+    ${P.questions.map((q,i)=>{ const a=P.answers[q.id];
+      const status=!a?['','아직']:(a.transcript?['ok','글 변환 완료']:['warn','음성만 있음']);
+      return `<div class="ans-item">
+        <div class="ans-head"><span class="num">${i+1}</span><span class="qt">${esc(q.t)}</span><span class="pill ${status[0]}">${status[1]}</span></div>
+        ${a&&a.blob?`<div class="row"><audio controls preload="metadata" src="${urlFor(a.blob)}"></audio><span class="hint" style="margin:0">${fmtDur(a.duration)} · ${a.source==='kakao'?'카톡 음성 첨부':a.source==='assist'?'자녀 보조 녹음':'부모님 앱 녹음'}</span></div>`:''}
+        <div class="row" style="margin-top:6px">
+          <label class="btnlike">🎧 음성 파일 첨부<input type="file" data-attach="${q.id}" accept="audio/*,.m4a,.aac,.amr,.mp3,.wav,.ogg,.webm" hidden></label>
+          <button data-act="assistRec" data-id="${q.id}">🎙 이 기기로 녹음 (자녀 보조)</button>
+          ${a?`<button data-act="clearAns" data-id="${q.id}">답변 지우기</button>`:''}
+        </div>
+        <textarea rows="3" data-ans="${q.id}" placeholder="부모님 답변을 글로 적어 주세요. 자동 변환된 글을 고치거나, 음성 변환 도구 결과를 붙여 넣으면 돼요.">${esc(a&&a.transcript||'')}</textarea>
+      </div>`; }).join('')}
+  </section>`;
+}
+
+/* ── ④ 원고 정리 ── */
+function getKey(){ try{ return localStorage.getItem('bumo-api-key')||apiKeyMem.v; }catch{ return apiKeyMem.v; } }
+function viewEdit(){
+  const has=P.questions.filter(q=>P.answers[q.id]&&P.answers[q.id].transcript);
+  const key=getKey();
+  return `
+  <section class="card">
+    <h2>AI 원고 정리</h2>
+    <p class="hint">부모님 말투를 살려 1인칭 자서전 문장으로 다듬어요. 답변에 없는 내용은 덧붙이지 않도록 지시하지만, 꼭 원문과 비교해 검수해 주세요. 정리할 때 <b>글로 옮긴 답변만</b> Anthropic(Claude)으로 보내지고 음성은 보내지 않아요.</p>
+    <div class="grid2">
+      <label>Claude API 키 <input type="password" id="apiKey" placeholder="sk-ant-..." value="${esc(key)}" autocomplete="off"></label>
+      <div class="row" style="align-self:end;margin-bottom:12px">
+        <label class="inline-check"><input type="checkbox" id="keyRemember" ${(()=>{try{return localStorage.getItem('bumo-api-key')?'checked':''}catch{return ''}})()}> 이 기기에 기억하기</label>
+        <button data-act="saveKey">키 적용</button>
+      </div>
+    </div>
+    <div class="row">
+      <button class="primary" data-act="aiAll" ${has.length?'':'disabled'}>✨ 아직 정리 안 된 답변 모두 AI로 정리 (${has.filter(q=>!(P.drafts[q.id]&&P.drafts[q.id].text)).length}개)</button>
+      <button data-act="copyAll" ${has.length?'':'disabled'}>AI 없이 원문 그대로 채우기</button>
+    </div>
+    <p class="status-line" id="aiStatus"></p>
+  </section>
+  <section class="card">
+    <h2>여는 글 · 닫는 글</h2>
+    <label>여는 글 (자녀가 쓰는 글)<textarea data-bind="preface" rows="4" placeholder="${esc(defaultPreface())}">${esc(P.preface)}</textarea></label>
+    <label>닫는 글<textarea data-bind="epilogue" rows="3" placeholder="${esc(defaultEpilogue())}">${esc(P.epilogue)}</textarea></label>
+  </section>
+  <section class="card">
+    <h2>질문별 원고 검수</h2>
+    ${has.length?'':'<p class="empty">③ 답변 모으기에서 글로 옮긴 답변이 생기면 여기에 나타나요.</p>'}
+    ${has.map(q=>{ const a=P.answers[q.id], d=P.drafts[q.id]||{};
+      return `<div class="edit-item ${d.excluded?'excluded':''}" id="ed-${q.id}">
+        <div class="ans-head"><span class="chip">${chTitle(q.ch)}</span><span class="qt">${esc(q.t)}</span></div>
+        <details><summary class="hint" style="cursor:pointer;margin:0">원문 보기 (음성을 글로 옮긴 그대로)</summary><div class="orig">${esc(a.transcript)}</div></details>
+        <textarea rows="6" data-draft="${q.id}" placeholder="여기에 자서전에 들어갈 글이 들어가요.">${esc(d.text||'')}</textarea>
+        <div class="row">
+          <button data-act="aiOne" data-id="${q.id}">✨ AI로 ${d.text?'다시 ':''}정리</button>
+          <button data-act="copyOne" data-id="${q.id}">원문 그대로</button>
+          <label class="inline-check"><input type="checkbox" data-excl="${q.id}" ${d.excluded?'checked':''}> 자서전에서 빼기 (다른 사람 사생활 등)</label>
+          <span class="status-line" data-st="${q.id}"></span>
+        </div>
+      </div>`; }).join('')}
+  </section>`;
+}
+function defaultPreface(){ const cn=P.childName||'자녀'; return `이 책은 ${josa(cn,'이가','가')} ${P.parentLabel}께 여쭌 질문과, ${P.parentLabel}께서 목소리로 들려주신 대답을 엮은 것입니다. 늦기 전에 묻고 싶었고, 오래 기억하고 싶었습니다.`; }
+function defaultEpilogue(){ return `이야기를 들려주셔서 고맙습니다. 이 책에 담지 못한 이야기는 앞으로 더 자주 여쭙겠습니다.`; }
+
+const AI_SYSTEM = pl => `당신은 부모님의 구술을 자서전 원고로 다듬는 편집자입니다. 자녀가 ${pl}께 질문하고, ${pl}께서 목소리로 답한 내용을 음성 인식으로 글로 옮긴 원문을 받습니다.
+
+규칙:
+- ${pl}께서 직접 쓰신 것처럼 1인칭("나는", "내가")으로 씁니다. 자녀를 부를 때는 원문의 호칭을 따릅니다.
+- 말투와 사투리, 자주 쓰시는 표현은 살립니다. 입말을 자연스러운 글말로 다듬되 지나치게 꾸미거나 문학적으로 바꾸지 않습니다.
+- "음", "어", "그러니까" 같은 군말과 같은 말의 반복은 정리합니다.
+- 음성 인식 오류가 분명한 단어만 문맥에 맞게 고칩니다. 확실하지 않으면 그대로 둡니다.
+- 답변에 없는 사실, 사건, 감정, 교훈을 덧붙이지 않습니다. 이름, 연도, 장소를 지어내지 않습니다.
+- 분량은 원문과 비슷하게 유지하고, 내용이 바뀌는 곳에서 문단을 나눕니다(빈 줄로 구분).
+- 제목, 질문, 설명, 따옴표, 머리말 없이 본문만 출력합니다.`;
+
+async function aiPolish(q, transcript){
+  const key=getKey(); if(!key) throw new Error('먼저 Claude API 키를 넣고 "키 적용"을 눌러 주세요.');
+  const body={ model:'claude-opus-5-5', max_tokens:8000, output_config:{effort:'low'},
+    system:AI_SYSTEM(P.parentLabel),
+    messages:[{role:'user',content:`질문: ${q.t}\n\n${P.parentLabel}의 답변 원문:\n${transcript}`}] };
+  const call = async withFallback => {
+    const headers={'content-type':'application/json','x-api-key':key,'anthropic-version':'2026-10-21','anthropic-dangerous-direct-browser-access':'true'};
+    const b={...body};
+    if(withFallback){ headers['anthropic-beta']='server-side-fallback-2026-07-01'; b.fallbacks='default'; }
+    return fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify(b)});
+  };
+  let res;
+  try{ res=await call(true); if(res.status===400) res=await call(false); }
+  catch(e){ throw new Error('인터넷 연결을 확인해 주세요.'); }
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok){
+    const m=data&&data.error&&data.error.message||res.statusText;
+    if(res.status===401) throw new Error('API 키가 올바르지 않아요.');
+    if(res.status===429) throw new Error('요청이 많아요. 잠시 후 다시 시도해 주세요.');
+    throw new Error(`AI 오류 (${res.status}): ${m}`);
+  }
+  if(data.stop_reason==='refusal') throw new Error('AI가 이 답변의 정리를 거절했어요. 직접 다듬어 주세요.');
+  const text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+  if(!text) throw new Error('AI가 빈 결과를 돌려줬어요.');
+  return text;
+}
+
+/* ── ⑤ 디지털 자서전 ── */
+function bookSections(){
+  const out=[]; const order=[];
+  P.questions.forEach(q=>{ if(!order.includes(q.ch)) order.push(q.ch); });
+  order.forEach(ch=>{
+    const stories=P.questions.filter(q=>q.ch===ch).map(q=>{
+      const a=P.answers[q.id]||{}, d=P.drafts[q.id]||{};
+      if(d.excluded) return null;
+      const text=(d.text||'').trim()||(a.transcript||'').trim();
+      if(!text) return null;
+      return {q,text,blob:a.blob||null};
+    }).filter(Boolean);
+    if(stories.length) out.push({ch,title:chTitle(ch),stories});
+  });
+  return out;
+}
+function bookMarkup(srcFor){
+  const secs=bookSections(); const cn=P.childName||'자녀';
+  return `<article class="book">
+    <section class="cover"><div>
+      <p class="kicker">디지털 자서전</p>
+      <h1>${esc(P.title)}</h1>
+      <p class="who">${esc(P.parentLabel)}의 목소리로 쓴 이야기</p>
+      <p class="date">${fmtDate(Date.now())}</p>
+      <p class="by">엮은이 ${esc(cn)}</p>
+    </div></section>
+    <section class="page"><h2>여는 글</h2>${paras(P.preface||defaultPreface())}</section>
+    ${secs.map((s,i)=>`<section class="chapter"><p class="ch-num">${i+1}장</p><h2>${esc(s.title)}</h2>
+      ${s.stories.map(st=>{ const src=st.blob&&srcFor(st); return `<div class="story"><h3>${esc(st.q.t)}</h3>
+        ${src?`<div class="voice">🔊 ${esc(P.parentLabel)}의 목소리 <audio controls preload="none" src="${src}"></audio></div>`:''}
+        ${paras(st.text)}</div>`; }).join('')}
+    </section>`).join('')}
+    <section class="page"><h2>닫는 글</h2>${paras(P.epilogue||defaultEpilogue())}</section>
+    <footer class="colophon">${esc(P.title)} · 우리 부모님 이야기책<br>고백(고요한 백마디) · ${fmtDate(Date.now())}</footer>
+  </article>`;
+}
+function viewBook(){
+  const secs=bookSections(); const st=answerStats();
+  const chars=secs.reduce((s,c)=>s+c.stories.reduce((t,x)=>t+x.text.length,0),0);
+  const pages=Math.ceil(chars/550)+secs.length+3;
+  return `
+  <div class="toolbar">
+    <button class="primary" data-act="exportWeb">🌐 웹 자서전 저장 (.html, 목소리 포함)</button>
+    <button data-act="print">🖨 PDF로 저장 · A5 흑백</button>
+    <button data-act="backup">💾 전체 백업</button>
+    <label class="btnlike">📂 백업 불러오기<input type="file" id="restore" accept=".json,application/json" hidden></label>
+    <button data-act="wipe">🗑 모든 기록 삭제</button>
+  </div>
+  <section class="card no-print"><div class="stats">
+    <div><b>${secs.reduce((s,c)=>s+c.stories.length,0)}</b>실린 이야기</div>
+    <div><b>${chars.toLocaleString()}자</b>본문 분량</div>
+    <div><b>약 ${pages}쪽</b>A5 소책자 예상 (목표 40~60쪽)</div>
+    <div><b>${fmtDur(st.secs)}</b>총 녹음 시간</div>
+  </div></section>
+  <div class="book-wrap">${secs.length?bookMarkup(st=>urlFor(st.blob)):'<p class="empty">아직 자서전에 실을 이야기가 없어요. ③에서 답변을 모으고 ④에서 원고를 정리해 주세요.</p>'}</div>`;
+}
+async function exportWeb(){
+  toast('자서전 파일을 만드는 중이에요…');
+  const secs=bookSections(); const map=new Map();
+  for(const s of secs) for(const st of s.stories) if(st.blob) map.set(st.q.id, await blobToDataURL(st.blob));
+  const html=`<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(P.title)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#efe8db}body{padding:24px 0}@media(max-width:600px){body{padding:0}}.book{box-shadow:0 8px 30px rgba(80,60,30,.12)}@media print{body{background:#fff;padding:0}.book{box-shadow:none}}${BOOK_CSS}</style></head>
+<body>${bookMarkup(st=>map.get(st.q.id))}</body></html>`;
+  download(new Blob([html],{type:'text/html'}), `${P.title.replace(/[\\/:*?"<>|]/g,'')}_디지털자서전.html`);
+}
+
+/* ── 백업 / 복원 ── */
+async function serializeProject(){
+  const answers={};
+  for(const [k,a] of Object.entries(P.answers)) answers[k]={...a, blob:undefined, audio:a.blob?await blobToDataURL(a.blob):null};
+  return {type:'bumo-backup',v:1,savedAt:Date.now(),project:{...P,answers}};
+}
+async function restoreProject(obj){
+  const p=obj.project; const answers={};
+  for(const [k,a] of Object.entries(p.answers||{})){ const {audio,...rest}=a; answers[k]={...rest, blob:audio?await dataURLToBlob(audio):null}; }
+  P={...newProject(),...p,answers}; save(); render(); toast('백업을 불러왔어요');
+}
+async function importAnswerFile(obj){
+  if(obj.type==='bumo-backup'){ if(confirm('전체 백업 파일이에요. 지금 작업을 이 백업으로 바꿀까요?')) await restoreProject(obj); return 0; }
+  if(obj.type!=='bumo-answers') throw new Error('답변 파일이 아니에요');
+  if(obj.pid!==P.id&&!confirm('다른 자서전 작업에서 만든 답변 파일이에요. 그래도 가져올까요?')) return 0;
+  let n=0;
+  for(const a of obj.answers||[]){
+    let q=P.questions.find(x=>x.id===a.qid);
+    if(!q){ q={id:a.qid,ch:'custom',t:a.q}; P.questions.push(q); }
+    const prev=P.answers[a.qid];
+    if(prev&&!confirm(`"${q.t}"에 이미 답변이 있어요. 새 파일의 답변으로 바꿀까요?`)) continue;
+    P.answers[a.qid]={blob:a.audio?await dataURLToBlob(a.audio):null, mime:a.mime, transcript:a.transcript||'', duration:a.duration||0, recordedAt:a.recordedAt||Date.now(), source:'app'};
+    n++;
+  }
+  if(obj.consentAt) P.consents[obj.r]=obj.consentAt;
+  return n;
+}
+
+/* ── 자녀 보조 녹음 모달 ── */
+function recordModal(q){
+  return new Promise(resolve=>{
+    const m=document.createElement('div'); m.className='modal';
+    m.innerHTML=`<div class="modal-box"><p class="hint">자녀 보조 입력 · 부모님 옆에서 대신 녹음해요</p><p class="q">${esc(q.t)}</p>
+      <div class="timer" id="mt">0:00</div><div class="live" id="ml">${Recorder.sttSupported()?'말씀하시는 내용이 여기에 글로 나타나요…':'이 브라우저는 자동 글 변환을 지원하지 않아 녹음만 돼요.'}</div>
+      <div class="row end"><button data-m="speak">🔊 질문 읽기</button><button data-m="cancel">취소</button><button class="primary" data-m="stop">■ 녹음 끝내기</button></div></div>`;
+    document.body.appendChild(m);
+    const rec=new Recorder({ onTick:s=>{$('#mt',m).textContent=fmtDur(s);}, onText:t=>{$('#ml',m).textContent=t;}, onLimit:()=>finish() });
+    const finish=async()=>{ const r=await rec.stop(); m.remove(); resolve(r); };
+    m.addEventListener('click',e=>{ const b=e.target.closest('[data-m]'); if(!b) return;
+      if(b.dataset.m==='stop') finish();
+      if(b.dataset.m==='cancel'){ rec.cancel(); m.remove(); resolve(null); }
+      if(b.dataset.m==='speak') speak(q.t); });
+    rec.start().catch(e=>{ m.remove(); toast(micErrorText(e)); resolve(null); });
+  });
+}
+
+/* ── 이벤트 ── */
+const ACTIONS = {
+  tab(el){ tab=el.dataset.k; try{ sessionStorage.setItem('bumo-tab',tab); }catch{} render(); scrollTo(0,0); },
+  speakGreeting(){ speak([`${P.parentLabel}, ${P.greeting}`]); },
+  speakQ(el){ const i=+el.dataset.i; speak([ordinal(i), P.questions[i].t]); },
+  moveQ(el){ const i=+el.dataset.i, j=i+(+el.dataset.d); if(j<0||j>=P.questions.length) return; const a=P.questions; [a[i],a[j]]=[a[j],a[i]]; save(); render(); },
+  removeQ(el){ P.questions=P.questions.filter(q=>q.id!==el.dataset.id); save(); render(); },
+  toggleQ(el){ const id=el.dataset.id; if(el.checked){ const q=BANK.find(x=>x.id===id); P.questions.push({id:q.id,ch:q.ch,t:q.t}); } else P.questions=P.questions.filter(q=>q.id!==id); save(); render(); },
+  resetRec(){ if(!confirm('보낼 질문을 추천 20개로 되돌릴까요? (직접 쓴 질문은 빠져요)')) return; P.questions=recommended(); save(); render(); },
+  sortCh(){ const ord=CHAPTERS.map(c=>c.id); P.questions.sort((a,b)=>ord.indexOf(a.ch)-ord.indexOf(b.ch)); save(); render(); },
+  addCustom(){ const t=$('#customText').value.trim(); if(!t) return toast('질문을 써 주세요'); P.questions.push({id:'u'+uid(),ch:$('#customCh').value,t}); save(); render(); toast('질문을 추가했어요'); },
+  async copyMsg(el){ const ok=await copyText(kakaoMessage(+el.dataset.r)); toast(ok?'카톡 메시지를 복사했어요. 부모님 채팅방에 붙여 넣어 주세요':'복사하지 못했어요'); },
+  async shareMsg(el){ const text=kakaoMessage(+el.dataset.r);
+    if(navigator.share){ try{ await navigator.share({title:P.title,text}); }catch{} } else { await copyText(text); toast('공유 기능이 없어 메시지를 복사했어요'); } },
+  previewParent(el){ window.open(parentLink(+el.dataset.r),'_blank'); },
+  speakRound(el){ const r=+el.dataset.r, qs=rounds()[r-1], off=(r-1)*(+P.roundSize||5);
+    speak([`${P.parentLabel}, ${P.greeting}`, ...qs.flatMap((q,i)=>[ordinal(off+i), q.t])]); toast('읽는 중이에요. 다른 버튼을 누르면 멈춰요'); },
+  markSent(el){ const r=el.dataset.r; if(P.sent[r]) delete P.sent[r]; else P.sent[r]=Date.now(); save(); render(); },
+  async assistRec(el){ const q=P.questions.find(x=>x.id===el.dataset.id); const r=await recordModal(q); if(!r) return;
+    P.answers[q.id]={blob:r.blob,mime:r.mime,transcript:r.transcript,duration:r.duration,recordedAt:Date.now(),source:'assist'}; save(); render(); toast('녹음을 저장했어요'); },
+  clearAns(el){ if(!confirm('이 질문의 답변(음성과 글)을 지울까요?')) return; delete P.answers[el.dataset.id]; delete P.drafts[el.dataset.id]; save(); render(); },
+  saveKey(){ const k=$('#apiKey').value.trim(); apiKeyMem.v=k; try{ if($('#keyRemember').checked&&k) localStorage.setItem('bumo-api-key',k); else localStorage.removeItem('bumo-api-key'); }catch{} toast(k?'API 키를 적용했어요':'API 키를 지웠어요'); },
+  async aiOne(el){ await runAI([P.questions.find(q=>q.id===el.dataset.id)]); },
+  async aiAll(){ await runAI(P.questions.filter(q=>P.answers[q.id]&&P.answers[q.id].transcript&&!(P.drafts[q.id]&&P.drafts[q.id].text))); },
+  copyOne(el){ const id=el.dataset.id; setDraft(id,P.answers[id].transcript); const ta=document.querySelector(`[data-draft="${id}"]`); if(ta) ta.value=P.answers[id].transcript; },
+  copyAll(){ P.questions.forEach(q=>{ const a=P.answers[q.id]; if(a&&a.transcript&&!(P.drafts[q.id]&&P.drafts[q.id].text)) setDraft(q.id,a.transcript); }); render(); toast('비어 있는 원고를 원문으로 채웠어요'); },
+  exportWeb(){ exportWeb().catch(e=>toast('저장 실패: '+e.message)); },
+  print(){ window.print(); },
+  async backup(){ toast('백업 파일을 만드는 중이에요…'); const o=await serializeProject(); download(new Blob([JSON.stringify(o)],{type:'application/json'}),`이야기책_백업_${new Date().toISOString().slice(0,10)}.json`); },
+  async wipe(){ if(!confirm('이 기기에 저장된 질문, 부모님 음성, 원고를 모두 지울까요? 되돌릴 수 없어요.')) return;
+    await DB.del('project'); try{ localStorage.removeItem('bumo-api-key'); }catch{} P=newProject(); save(); tab='pick'; render(); toast('모두 지웠어요'); },
+};
+function setDraft(id,text){ P.drafts[id]={...(P.drafts[id]||{}),text,editedAt:Date.now()}; save(); }
+let aiBusy=false;
+async function runAI(list){
+  if(aiBusy) return toast('정리 중이에요. 잠시만요');
+  list=list.filter(Boolean); if(!list.length) return toast('정리할 답변이 없어요');
+  if(!getKey()) return toast('먼저 Claude API 키를 넣고 "키 적용"을 눌러 주세요');
+  aiBusy=true; let done=0, fail=0; const status=$('#aiStatus');
+  const upd=()=>{ if(status) status.textContent=`AI 정리 중… ${done+fail} / ${list.length}${fail?` (실패 ${fail})`:''}`; };
+  upd();
+  const queue=[...list];
+  const worker=async()=>{ while(queue.length){ const q=queue.shift(); const st=document.querySelector(`[data-st="${q.id}"]`); if(st) st.textContent='정리 중…';
+    try{ const t=await aiPolish(q,P.answers[q.id].transcript); setDraft(q.id,t); const ta=document.querySelector(`[data-draft="${q.id}"]`); if(ta) ta.value=t; if(st) st.textContent='✓ 정리 완료'; done++; }
+    catch(e){ fail++; if(st) st.textContent='⚠ '+e.message; if(/키/.test(e.message)) queue.length=0; }
+    upd(); } };
+  await Promise.all([worker(),worker()]);
+  aiBusy=false; if(status) status.textContent=`AI 정리 끝: 성공 ${done}개${fail?`, 실패 ${fail}개`:''}. 원문과 비교해 검수해 주세요.`;
+}
+
+function bindAppEvents(){
+  document.addEventListener('click',e=>{ const el=e.target.closest('[data-act]'); if(!el||!$('#app').contains(el)) return;
+    if(el.dataset.act!=='toggleQ'&&el.tagName!=='LABEL') e.preventDefault();
+    if(!/^speak/.test(el.dataset.act)&&'speechSynthesis' in window) speechSynthesis.cancel();
+    const f=ACTIONS[el.dataset.act]; if(f) Promise.resolve(f(el,e)).catch(err=>toast(err.message)); });
+  document.addEventListener('input',e=>{ const t=e.target;
+    if(t.dataset.bind){ P[t.dataset.bind]=t.dataset.bind==='roundSize'?+t.value:t.value; save(); if(t.tagName==='SELECT') render(); }
+    else if(t.dataset.ans){ const id=t.dataset.ans; P.answers[id]={...(P.answers[id]||{source:'kakao',duration:0,recordedAt:Date.now()}),transcript:t.value}; save(); }
+    else if(t.dataset.draft){ setDraft(t.dataset.draft,t.value); }
+  });
+  document.addEventListener('change',async e=>{ const t=e.target;
+    if(t.dataset.excl){ P.drafts[t.dataset.excl]={...(P.drafts[t.dataset.excl]||{}),excluded:t.checked}; save(); t.closest('.edit-item').classList.toggle('excluded',t.checked); }
+    else if(t.dataset.ans){ render(); }
+    else if(t.dataset.attach&&t.files[0]){ const f=t.files[0], id=t.dataset.attach; const d=await audioDuration(f);
+      P.answers[id]={...(P.answers[id]||{}),blob:f,mime:f.type||'audio/mp4',duration:d,recordedAt:Date.now(),source:'kakao',transcript:(P.answers[id]&&P.answers[id].transcript)||''}; save(); render(); toast('음성을 첨부했어요. 아래 칸에 글을 넣어 주세요'); }
+    else if(t.id==='importAnswers'){ let n=0; for(const f of t.files){ try{ n+=await importAnswerFile(JSON.parse(await f.text())); }catch(err){ toast(`${f.name}: ${err.message}`); } } save(); render(); if(n) toast(`답변 ${n}개를 가져왔어요`); }
+    else if(t.id==='restore'&&t.files[0]){ try{ const o=JSON.parse(await t.files[0].text()); if(o.type!=='bumo-backup') throw new Error('백업 파일이 아니에요'); if(confirm('지금 작업을 이 백업으로 바꿀까요?')) await restoreProject(o); }catch(err){ toast(err.message); } }
+  });
+}
+
+/* ════════════════════════════════════════════════
+   부모님 화면 (링크 #p=... 로 열림)
+   ════════════════════════════════════════════════ */
+async function initParent(enc){
+  const root=$('#parent'); document.body.classList.add('parent-mode'); root.hidden=false;
+  let d; try{ d=JSON.parse(b64d(enc)); if(!d.q||!d.q.length) throw 0; }
+  catch{ root.innerHTML='<p class="p-text">링크가 올바르지 않아요. 보내 준 사람에게 다시 받아 주세요.</p>'; return; }
+  document.title=`${d.t} · 질문지`;
+  const KEY=`parent:${d.pid}:${d.r}`;
+  let S=await DB.get(KEY).catch(()=>null)||{step:'intro',idx:0,consentAt:null,answers:{}};
+  const persist=()=>DB.set(KEY,S).catch(()=>{});
+  const canRec=Recorder.supported();
+  const n=d.q.length, cn=d.cn||'자녀', pl=d.pl||'부모님';
+  let rec=null, live='', secs=0, urls=[];
+
+  const qAt=i=>({id:d.q[i][0],t:d.q[i][1]});
+  const answeredCount=()=>d.q.filter(([id])=>S.answers[id]).length;
+  const speakQ=(withGreeting)=>{ const q=qAt(S.idx); speak([withGreeting?`${pl}, ${d.g||''}`:'', ordinal(S.idx), q.t]); };
+
+  function draw(){
+    urls.forEach(u=>URL.revokeObjectURL(u)); urls=[];
+    if(S.step==='intro') root.innerHTML=`
+      <div class="p-brand">우리 부모님 이야기책</div>
+      <h1 class="p-h1">${esc(pl)}, 안녕하세요.<br>${esc(josa(cn,'이가','가'))} 보낸 질문이에요.</h1>
+      <p class="p-text">${esc(d.g||'')}</p>
+      <p class="p-text">질문을 목소리로 읽어 드려요. <b>빨간 버튼</b>을 누르고 편하게 말씀해 주시면 돼요. 이번에는 질문 <b>${n}개</b>예요.</p>
+      <div class="p-consent"><p class="p-text" style="margin-bottom:8px"><b>시작하기 전에 확인해 주세요</b></p><ul>
+        <li>말씀하신 목소리와 내용은 「${esc(d.t)}」 자서전을 만드는 데에만 써요.</li>
+        <li>녹음은 이 휴대폰에 저장되고, 마지막에 <b>"보내기"</b>를 누르실 때만 ${esc(cn)}에게 전달돼요.</li>
+        <li>글을 다듬을 때 AI(Claude)를 쓸 수 있어요. 이때 목소리가 아니라 글로 옮긴 내용만 보내요.</li>
+        <li>${esc(d.rn||'자서전이 완성되면 녹음 파일은 지웁니다.')}</li>
+        <li>언제든 지워 달라고 하시면 바로 지워요. 대답하기 싫은 질문은 넘어가셔도 돼요.</li>
+      </ul></div>
+      ${canRec?'':`<div class="p-warn">이 화면에서는 녹음이 되지 않아요. 오른쪽 위 메뉴에서 <b>"다른 브라우저로 열기"</b>(크롬·사파리)를 눌러 주세요. 어려우시면 질문을 듣고 <b>카카오톡 음성 메시지</b>로 대답해 주셔도 괜찮아요.</div>`}
+      <button class="p-btn primary" data-p="agree">동의하고 시작하기</button>
+      <button class="p-btn ghost" data-p="disagree">동의하지 않아요</button>`;
+    else if(S.step==='declined') root.innerHTML=`
+      <div class="p-brand">우리 부모님 이야기책</div>
+      <h1 class="p-h1">알겠어요.</h1><p class="p-text">동의하지 않으시면 아무것도 녹음하거나 보내지 않아요. 마음이 바뀌시면 언제든 다시 열어 주세요.</p>
+      <button class="p-btn ghost" data-p="restart">처음으로</button>`;
+    else if(S.step==='q') drawQuestion();
+    else if(S.step==='done'){ const c=answeredCount(); root.innerHTML=`
+      <div class="p-brand">우리 부모님 이야기책</div>
+      <h1 class="p-h1">고맙습니다, ${esc(pl)}.</h1>
+      <p class="p-text">${n}개 질문 중 <b>${c}개</b>에 대답해 주셨어요.</p>
+      ${c?`<button class="p-btn primary" data-p="send">📤 ${esc(cn)}에게 보내기</button>
+      <p class="p-hint" style="margin:0 0 20px">버튼을 누르면 보낼 곳이 나와요. <b>카카오톡</b>을 누르고 ${esc(cn)} 채팅방을 골라 주세요.</p>
+      <button class="p-btn ghost" data-p="save">파일로 저장하기</button>`:''}
+      <button class="p-btn ghost" data-p="review">대답 다시 보기</button>
+      ${d.r<d.n?`<p class="p-hint">다음 질문은 ${esc(josa(cn,'이가','가'))} 또 보내 드릴 거예요. (${d.r} / ${d.n}회차)</p>`:''}`; }
+  }
+
+  function drawQuestion(){
+    const q=qAt(S.idx), a=S.answers[q.id], recording=!!(rec&&rec.active);
+    let recBlock;
+    if(!canRec) recBlock=`<div class="p-warn">이 화면에서는 녹음이 되지 않아요. 질문을 들으신 뒤 <b>카카오톡 음성 메시지</b>로 대답해 주세요. 크롬·사파리로 열면 여기서 바로 녹음할 수 있어요.</div>`;
+    else if(recording) recBlock=`<button class="p-mic on" data-p="stop"><span class="dot"></span>다 말했어요</button>
+      <div class="p-timer" id="pt">${fmtDur(secs)}</div>
+      ${Recorder.sttSupported()?`<div class="p-live" id="pl">${esc(live)||'듣고 있어요… 편하게 말씀하세요.'}</div>`:''}`;
+    else if(a){ const u=a.blob?URL.createObjectURL(a.blob):''; if(u) urls.push(u);
+      recBlock=`<div class="p-done">✓ 녹음됐어요 (${fmtDur(a.duration)})</div>${u?`<audio controls src="${u}"></audio>`:''}
+      <button class="p-btn ghost" data-p="redo">↺ 다시 말하기</button>`; }
+    else recBlock=`<button class="p-mic" data-p="rec"><span class="dot"></span>눌러서 말하기</button>
+      <p class="p-hint">버튼을 누르고 말씀하세요.<br>다 말씀하시면 한 번 더 누르세요.</p>`;
+    root.innerHTML=`
+      <div class="p-top"><span>${S.idx+1} / ${n}</span><div class="p-bar"><i style="width:${(answeredCount())/n*100}%"></i></div></div>
+      <p class="p-label">${S.idx+1}번째 질문</p>
+      <h1 class="p-q">${esc(q.t)}</h1>
+      <button class="p-btn ghost" data-p="listen" ${recording?'disabled':''}>🔊 질문 다시 듣기</button>
+      <div class="p-rec">${recBlock}</div>
+      <div class="p-nav">
+        <button class="p-btn ghost" data-p="prev" ${S.idx===0||recording?'disabled':''}>← 이전</button>
+        <button class="p-btn primary" data-p="next" ${recording?'disabled':''}>${S.idx===n-1?'다 했어요':'다음 질문 →'}</button>
+      </div>
+      ${!a&&!recording?`<button class="p-skip" data-p="next">이 질문은 넘어갈게요</button>`:''}`;
+  }
+
+  async function buildFile(){
+    const answers=[];
+    for(const [qid,t] of d.q){ const a=S.answers[qid]; if(!a) continue;
+      answers.push({qid,q:t,transcript:a.transcript||'',mime:a.mime,duration:a.duration,recordedAt:a.recordedAt,audio:a.blob?await blobToDataURL(a.blob):null}); }
+    const json=JSON.stringify({type:'bumo-answers',v:1,pid:d.pid,r:d.r,parentLabel:pl,consentAt:S.consentAt,answers});
+    return new File([json],`${pl}_이야기_${d.r}회차.json`,{type:'application/json'});
+  }
+
+  const H={
+    agree(){ S.consentAt=Date.now(); S.step='q'; persist(); draw(); speakQ(true); },
+    disagree(){ S.step='declined'; persist(); draw(); },
+    restart(){ S.step='intro'; persist(); draw(); },
+    listen(){ speakQ(false); },
+    async rec(){
+      speechSynthesis&&speechSynthesis.cancel();
+      secs=0; live='';
+      rec=new Recorder({
+        onTick:s=>{ secs=s; const t=$('#pt'); if(t) t.textContent=fmtDur(s); },
+        onText:t=>{ live=t; const el=$('#pl'); if(el) el.textContent=t; },
+        onLimit:()=>H.stop(),
+      });
+      try{ await rec.start(); }catch(e){ rec=null; alert(micErrorText(e)); return; }
+      drawQuestion();
+    },
+    async stop(){
+      if(!rec) return; const r=await rec.stop(); rec=null; if(!r) return;
+      const q=qAt(S.idx);
+      S.answers[q.id]={blob:r.blob,mime:r.mime,duration:r.duration,transcript:r.transcript,recordedAt:Date.now()};
+      persist(); drawQuestion();
+    },
+    redo(){ if(confirm('방금 녹음을 지우고 다시 말씀하실래요?')){ delete S.answers[qAt(S.idx).id]; persist(); drawQuestion(); } },
+    prev(){ if(S.idx>0){ S.idx--; persist(); draw(); speakQ(false); } },
+    next(){ if(S.idx<n-1){ S.idx++; persist(); draw(); speakQ(false); } else { S.step='done'; persist(); draw(); speechSynthesis&&speechSynthesis.cancel(); } },
+    review(){ S.step='q'; S.idx=0; persist(); draw(); },
+    async send(){
+      const f=await buildFile();
+      if(navigator.canShare&&navigator.canShare({files:[f]})){
+        try{ await navigator.share({files:[f],title:`${pl}의 이야기`,text:`${pl}의 이야기 ${d.r}회차 대답이에요.`}); return; }
+        catch(e){ if(e.name==='AbortError') return; }
+      }
+      download(f,f.name); alert(`이 휴대폰에서는 바로 보내기가 안 돼서 파일로 저장했어요.\n카카오톡에서 ${cn}에게 "${f.name}" 파일을 보내 주세요.`);
+    },
+    async save(){ const f=await buildFile(); download(f,f.name); },
+  };
+  root.addEventListener('click',e=>{ const b=e.target.closest('[data-p]'); if(!b||b.disabled) return; const f=H[b.dataset.p]; if(f) f(); });
+  window.addEventListener('beforeunload',e=>{ if(rec&&rec.active){ e.preventDefault(); e.returnValue=''; } });
+  draw();
+}
+
+/* ════════════════ 시작 ════════════════ */
+(async function init(){
+  const m=location.hash.match(/^#p=(.+)$/);
+  if(m) return initParent(m[1]);
+  try{ P=await DB.get('project'); }catch{ P=null; }
+  if(!P){ P=newProject(); save(); }
+  P={...newProject(),...P};
+  try{ tab=sessionStorage.getItem('bumo-tab')||'pick'; }catch{}
+  $('#app').hidden=false;
+  bindAppEvents(); render();
+})();
+window.addEventListener('hashchange',()=>{ if(/^#p=/.test(location.hash)) location.reload(); });
+</script>
+</body>
+</html>
