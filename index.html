@@ -268,18 +268,44 @@ const DB = {
 };
 
 /* ════════════════ 음성 합성(질문 읽기) ════════════════ */
-function speak(texts, onDone){
-  if(!('speechSynthesis' in window)){ toast('이 브라우저는 음성 읽기를 지원하지 않아요'); return; }
-  speechSynthesis.cancel();
-  const list=[].concat(texts).filter(Boolean);
-  const voices=speechSynthesis.getVoices();
-  const ko=voices.find(v=>/ko[-_]KR/i.test(v.lang)&&/Google|Neural|Natural|Online/i.test(v.name))||voices.find(v=>/ko/i.test(v.lang));
-  list.forEach((t,i)=>{ const u=new SpeechSynthesisUtterance(t); u.lang='ko-KR'; u.rate=0.9; u.pitch=1; if(ko) u.voice=ko;
-    if(i===list.length-1&&onDone) u.onend=onDone; speechSynthesis.speak(u); });
+// 기기에 설치된 한국어 음성 중 사람 목소리에 가까운 것(뉴럴·고품질)을 우선 고르고,
+// 문장마다 짧게 쉬어 가며 읽어 기계음 느낌을 줄인다.
+const VOICE={name:'',rate:0.95};
+const hasTTS=()=>'speechSynthesis' in window;
+function koVoices(){ return hasTTS()?speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang)):[]; }
+function voiceScore(v){
+  const n=v.name; let s=0;
+  if(/Natural|Neural/i.test(n)) s+=100;          // Edge: Microsoft SunHi/InJoon Online (Natural)
+  if(/Premium/i.test(n)) s+=90;                   // iOS·macOS 프리미엄 음성
+  if(/Enhanced|고품질|향상/i.test(n)) s+=70;       // iOS 향상된 음성
+  if(/Google/i.test(n)) s+=50;                    // Chrome·안드로이드 Google 음성
+  if(/Samsung|삼성/i.test(n)) s+=45;
+  if(/Online/i.test(n)) s+=20;
+  if(/Compact|eSpeak/i.test(n)) s-=80;            // 기계음이 강한 음성
+  return s;
 }
-if('speechSynthesis' in window){ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices(); }
+function bestVoices(){ return koVoices().sort((a,b)=>voiceScore(b)-voiceScore(a)); }
+function pickVoice(pref){ const vs=bestVoices(); return (pref&&vs.find(v=>v.name===pref))||vs[0]||null; }
+let speakToken=0;
+function stopSpeak(){ speakToken++; if(hasTTS()) speechSynthesis.cancel(); }
+function speak(texts, onDone){
+  if(!hasTTS()){ toast('이 브라우저는 음성 읽기를 지원하지 않아요'); return; }
+  stopSpeak(); const tok=speakToken;
+  // 문장 단위로 나눠 읽고 사이에 숨 쉬듯 쉰다 (긴 문장이 끊기는 크롬 버그도 피함)
+  const segs=[].concat(texts).filter(Boolean).flatMap(t=>String(t).split(/(?<=[.?!])\s+/)).map(s=>s.trim()).filter(Boolean);
+  const v=pickVoice(VOICE.name);
+  let i=0;
+  const next=()=>{ if(tok!==speakToken) return;
+    if(i>=segs.length){ onDone&&onDone(); return; }
+    const u=new SpeechSynthesisUtterance(segs[i++]);
+    u.lang=v?v.lang:'ko-KR'; if(v) u.voice=v; u.rate=VOICE.rate; u.pitch=1;
+    u.onend=()=>setTimeout(next, 320); u.onerror=()=>setTimeout(next, 0);
+    speechSynthesis.speak(u); };
+  next();
+}
+if(hasTTS()) speechSynthesis.getVoices();
 const ORD=['첫','두','세','네','다섯','여섯','일곱','여덟','아홉','열','열한','열두','열세','열네','열다섯','열여섯','열일곱','열여덟','열아홉','스무'];
-const ordinal = i => (ORD[i]||`${i+1}`)+' 번째 질문입니다.';
+const ordinal = i => (ORD[i]||`${i+1}`)+' 번째 질문이에요.';
 
 /* ════════════════ 녹음 + 실시간 글 변환 ════════════════ */
 class Recorder{
@@ -370,7 +396,7 @@ const apiKeyMem = {v:''};
 
 function newProject(){
   return { id:uid(), title:'우리 엄마 이야기', parentLabel:'어머니', childName:'', greeting:'요즘 어머니 이야기가 참 궁금해졌어요. 생각나시는 대로 편하게 말씀해 주세요.',
-    retention:'자서전이 완성되고 90일이 지나면 녹음 파일은 지웁니다.', baseUrl:'', roundSize:5,
+    retention:'자서전이 완성되고 90일이 지나면 녹음 파일은 지웁니다.', baseUrl:'', roundSize:5, voiceName:'', voiceRate:0.95,
     questions:recommended(), answers:{}, drafts:{}, consents:{}, sent:{}, preface:'', epilogue:'', createdAt:Date.now() };
 }
 let saveT;
@@ -398,6 +424,7 @@ function viewPick(){
       <label>자녀 이름 (부모님이 부르시는 이름)<input data-bind="childName" placeholder="예: 윤선" value="${esc(P.childName)}"></label>
       <label>첫 인사말 · 첫 질문 전에 음성으로 읽어 드려요<textarea data-bind="greeting" rows="3">${esc(P.greeting)}</textarea></label>
       <label>녹음 보관 안내 · 부모님 동의 화면에 보여요<textarea data-bind="retention" rows="2">${esc(P.retention)}</textarea></label>
+      ${voiceSettings()}
       <div class="row"><button data-act="speakGreeting">🔊 인사말 들어보기</button></div>
     </div>
     <div class="card">
@@ -425,13 +452,31 @@ function viewPick(){
   </section>`;
 }
 
+function syncVoice(){ VOICE.name=P.voiceName||''; VOICE.rate=+P.voiceRate||0.95; }
+function voiceSettings(){
+  const vs=bestVoices(), best=vs[0], natural=best&&voiceScore(best)>=50;
+  return `
+      <div class="grid2" style="gap:12px">
+        <label>질문 읽어 주는 목소리
+          <select data-bind="voiceName">
+            <option value="">자동 · 가장 자연스러운 목소리${best?` (${esc(best.name)})`:''}</option>
+            ${vs.map(v=>`<option value="${esc(v.name)}" ${P.voiceName===v.name?'selected':''}>${esc(v.name)}${voiceScore(v)>=50?' ★':''}</option>`).join('')}
+          </select></label>
+        <label>읽는 속도
+          <select data-bind="voiceRate">${[[0.85,'천천히'],[0.95,'보통 (추천)'],[1.05,'조금 빠르게']].map(([r,t])=>`<option value="${r}" ${+P.voiceRate===r?'selected':''}>${t}</option>`).join('')}</select></label>
+      </div>
+      <p class="hint">★는 사람 목소리에 가까운 음성이에요. 부모님 휴대폰에 같은 목소리가 없으면, 그 휴대폰에서 가장 자연스러운 목소리로 읽어요.
+      ${vs.length&&!natural?'<br><b>이 기기에는 자연스러운 한국어 음성이 없어요.</b> PC는 Microsoft Edge로 열면 "SunHi Online (Natural)" 음성을 쓸 수 있어요.':''}
+      ${!vs.length&&hasTTS()?'<br>이 브라우저에서 한국어 음성을 찾지 못했어요.':''}</p>`;
+}
+
 /* ── ② 보내기 ── */
 function rounds(){ const n=Math.max(1,+P.roundSize||5), out=[]; for(let i=0;i<P.questions.length;i+=n) out.push(P.questions.slice(i,i+n)); return out; }
 const DEPLOY_URL='https://yunseon0210-byte.github.io/parents-story-book/';
 function baseUrl(){ return (P.baseUrl||(/^https?:/.test(location.protocol)&&!/^(localhost|127\.)/.test(location.hostname)?location.href:DEPLOY_URL)).replace(/#.*$/,''); }
 function parentLink(r){
   const all=rounds(), qs=all[r-1];
-  const payload={v:1,pid:P.id,r,n:all.length,t:P.title,pl:P.parentLabel,cn:P.childName||'자녀',g:P.greeting,rn:P.retention,q:qs.map(q=>[q.id,q.t])};
+  const payload={v:1,pid:P.id,r,n:all.length,t:P.title,pl:P.parentLabel,cn:P.childName||'자녀',g:P.greeting,rn:P.retention,vn:P.voiceName||undefined,vr:+P.voiceRate||undefined,q:qs.map(q=>[q.id,q.t])};
   return baseUrl()+'#p='+b64e(JSON.stringify(payload));
 }
 function kakaoMessage(r){
@@ -757,10 +802,12 @@ async function runAI(list){
 function bindAppEvents(){
   document.addEventListener('click',e=>{ const el=e.target.closest('[data-act]'); if(!el||!$('#app').contains(el)) return;
     if(el.dataset.act!=='toggleQ'&&el.tagName!=='LABEL') e.preventDefault();
-    if(!/^speak/.test(el.dataset.act)&&'speechSynthesis' in window) speechSynthesis.cancel();
+    if(!/^speak/.test(el.dataset.act)) stopSpeak();
     const f=ACTIONS[el.dataset.act]; if(f) Promise.resolve(f(el,e)).catch(err=>toast(err.message)); });
   document.addEventListener('input',e=>{ const t=e.target;
-    if(t.dataset.bind){ P[t.dataset.bind]=t.dataset.bind==='roundSize'?+t.value:t.value; save(); if(t.tagName==='SELECT') render(); }
+    if(t.dataset.bind){ const k=t.dataset.bind; P[k]=(k==='roundSize'||k==='voiceRate')?+t.value:t.value; save(); syncVoice();
+      if(k==='voiceName'||k==='voiceRate') speak([`${P.parentLabel}, 안녕하세요. 이 목소리로 질문을 읽어 드릴게요.`]);
+      else if(t.tagName==='SELECT') render(); }
     else if(t.dataset.ans){ const id=t.dataset.ans; P.answers[id]={...(P.answers[id]||{source:'kakao',duration:0,recordedAt:Date.now()}),transcript:t.value}; save(); }
     else if(t.dataset.draft){ setDraft(t.dataset.draft,t.value); }
   });
@@ -782,6 +829,7 @@ async function initParent(enc){
   let d; try{ d=JSON.parse(b64d(enc)); if(!d.q||!d.q.length) throw 0; }
   catch{ root.innerHTML='<p class="p-text">링크가 올바르지 않아요. 보내 준 사람에게 다시 받아 주세요.</p>'; return; }
   document.title=`${d.t} · 질문지`;
+  VOICE.name=d.vn||''; VOICE.rate=+d.vr||0.95;
   const KEY=`parent:${d.pid}:${d.r}`;
   let S=await DB.get(KEY).catch(()=>null)||{step:'intro',idx:0,consentAt:null,answers:{}};
   const persist=()=>DB.set(KEY,S).catch(()=>{});
@@ -865,7 +913,7 @@ async function initParent(enc){
     restart(){ S.step='intro'; persist(); draw(); },
     listen(){ speakQ(false); },
     async rec(){
-      speechSynthesis&&speechSynthesis.cancel();
+      stopSpeak();
       secs=0; live='';
       rec=new Recorder({
         onTick:s=>{ secs=s; const t=$('#pt'); if(t) t.textContent=fmtDur(s); },
@@ -883,7 +931,7 @@ async function initParent(enc){
     },
     redo(){ if(confirm('방금 녹음을 지우고 다시 말씀하실래요?')){ delete S.answers[qAt(S.idx).id]; persist(); drawQuestion(); } },
     prev(){ if(S.idx>0){ S.idx--; persist(); draw(); speakQ(false); } },
-    next(){ if(S.idx<n-1){ S.idx++; persist(); draw(); speakQ(false); } else { S.step='done'; persist(); draw(); speechSynthesis&&speechSynthesis.cancel(); } },
+    next(){ if(S.idx<n-1){ S.idx++; persist(); draw(); speakQ(false); } else { S.step='done'; persist(); draw(); stopSpeak(); } },
     review(){ S.step='q'; S.idx=0; persist(); draw(); },
     async send(){
       const f=await buildFile();
@@ -909,7 +957,10 @@ async function initParent(enc){
   P={...newProject(),...P};
   try{ tab=sessionStorage.getItem('bumo-tab')||'pick'; }catch{}
   $('#app').hidden=false;
-  bindAppEvents(); render();
+  syncVoice(); bindAppEvents(); render();
+  // 음성 목록은 늦게 불러와지는 경우가 많아, 준비되면 목소리 선택 칸을 다시 그린다
+  if(hasTTS()) speechSynthesis.addEventListener('voiceschanged',()=>{ const a=document.activeElement;
+    if(tab==='pick'&&!(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))) render(); });
 })();
 window.addEventListener('hashchange',()=>{ if(/^#p=/.test(location.hash)) location.reload(); });
 </script>
